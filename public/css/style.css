@@ -1,0 +1,301 @@
+/* public/css/style.css */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  min-height: 100vh;
+  padding-top: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Main content area */
+.main-content {
+  padding: 1rem;
+}
+
+/* Cards */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  border: none;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+/* Status cards */
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Tables */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.table th {
+  border-top: none;
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table td, .table th {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+  padding: 0.5em 0.75em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn-group-sm > .btn, .btn-sm {
+  border-radius: 4px;
+}
+
+/* Forms */
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* Modals */
+.modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.nav-tabs {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd;
+  background-color: transparent;
+  border-bottom: 2px solid #0d6efd;
+}
+
+/* Toast notifications */
+.toast-container {
+  z-index: 9999;
+}
+
+.toast {
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .sidebar {
+    min-height: auto;
+  }
+}
+
+/* Status indicator */
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.status-online {
+  background-color: #28a745;
+}
+
+.status-offline {
+  background-color: #dc3545;
+}
+
+.status-busy {
+  background-color: #ffc107;
+}
+
+/* Progress bars */
+.task-progress {
+  height: 10px;
+  border-radius: 5px;
+}
+
+/* Device cards */
+.device-card {
+  transition: transform 0.2s;
+}
+
+.device-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Settings switches */
+.form-switch {
+  padding-left: 2.5em;
+}
+
+.form-switch .form-check-input {
+  width: 2em;
+}
+
+/* Priority slider styling */
+.form-range::-webkit-slider-thumb {
+  background: #0d6efd;
+}
+
+.form-range::-moz-range-thumb {
+  background: #0d6efd;
+}
+
+.form-range::-ms-thumb {
+  background: #0d6efd;
+}
+
+/* Battery indicators */
+.battery-indicator {
+  display: inline-flex;
+  align-items: center;
+}
+
+.battery-indicator i {
+  margin-right: 0.5rem;
+}
+
+/* Task lists */
+.task-item {
+  border-left: 4px solid transparent;
+  transition: background-color 0.2s;
+}
+
+.task-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.task-item.pending {
+  border-left-color: #ffc107;
+}
+
+.task-item.running {
+  border-left-color: #0d6efd;
+}
+
+.task-item.completed {
+  border-left-color: #28a745;
+}
+
+.task-item.failed {
+  border-left-color: #dc3545;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card .card-body {
+  padding: 1.5rem;
+}
+
+.dashboard-card .display-6 {
+  font-weight: 600;
+}
+
+/* Header search */
+.header-search {
+  max-width: 400px;
+}
+
+/* Dark mode switch */
+.theme-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}

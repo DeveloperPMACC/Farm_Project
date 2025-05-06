@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  # Servicio de la aplicación web
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farm-project-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+      - /dev/bus/usb:/dev/bus/usb
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=view_farm
+      - PORT=3000
+      - HOST=0.0.0.0
+      - ADB_PATH=/usr/bin/adb
+    depends_on:
+      - postgres
+    networks:
+      - farm-project-network
+
+  # Servicio de base de datos PostgreSQL
+  postgres:
+    image: postgres:14-alpine
+    container_name: farm-project-postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=farm_project
+    networks:
+      - farm-project-network
+
+networks:
+  farm-project-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
