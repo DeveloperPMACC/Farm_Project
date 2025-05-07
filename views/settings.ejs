@@ -1,0 +1,270 @@
+<%- contentFor('body') %>
+
+  <div id="settings-section" class="content-section active">
+    <h2>Configuración</h2>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="list-group" id="settings-tab" role="tablist">
+          <a class="list-group-item list-group-item-action active" id="profile-tab" data-bs-toggle="list"
+            href="#profile" role="tab" aria-controls="profile">Perfil</a>
+          <a class="list-group-item list-group-item-action" id="apps-tab" data-bs-toggle="list" href="#apps-settings"
+            role="tab" aria-controls="apps-settings">Aplicaciones</a>
+          <a class="list-group-item list-group-item-action" id="system-tab" data-bs-toggle="list" href="#system"
+            role="tab" aria-controls="system">Sistema</a>
+          <a class="list-group-item list-group-item-action" id="logs-tab" data-bs-toggle="list" href="#logs" role="tab"
+            aria-controls="logs">Logs</a>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="tab-content" id="settings-tabContent">
+          <!-- Perfil -->
+          <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="card">
+              <div class="card-header">
+                <h5>Información de Perfil</h5>
+              </div>
+              <div class="card-body">
+                <form id="profileForm">
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Nombre de Usuario</label>
+                    <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>"
+                      readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="role" class="form-label">Rol</label>
+                    <input type="text" class="form-control" id="role" name="role"
+                      value="<%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>" readonly>
+                  </div>
+                  <hr>
+                  <h5>Cambiar Contraseña</h5>
+                  <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword">
+                  </div>
+                  <div class="mb-3">
+                    <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword">
+                  </div>
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aplicaciones -->
+          <div class="tab-pane fade" id="apps-settings" role="tabpanel" aria-labelledby="apps-tab">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Aplicaciones Soportadas</h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                  data-bs-target="#addAppModal">
+                  <i class="fas fa-plus"></i> Nueva App
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Paquete</th>
+                        <th>Versión</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (apps && apps.length> 0) { %>
+                        <% apps.forEach(function(app) { %>
+                          <tr>
+                            <td>
+                              <%= app.name %>
+                            </td>
+                            <td>
+                              <%= app.packageName %>
+                            </td>
+                            <td>
+                              <%= app.version || 'N/A' %>
+                            </td>
+                            <td>
+                              <% if (app.isActive) { %>
+                                <span class="badge bg-success">Activa</span>
+                                <% } else { %>
+                                  <span class="badge bg-secondary">Inactiva</span>
+                                  <% } %>
+                            </td>
+                            <td>
+                              <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-warning btn-sm edit-app" data-id="<%= app.id %>">
+                                  <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm delete-app" data-id="<%= app.id %>">
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                          <% }); %>
+                            <% } else { %>
+                              <tr>
+                                <td colspan="5" class="text-center">No hay aplicaciones registradas</td>
+                              </tr>
+                              <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sistema -->
+          <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
+            <div class="card">
+              <div class="card-header">
+                <h5>Configuración del Sistema</h5>
+              </div>
+              <div class="card-body">
+                <form id="systemSettingsForm">
+                  <div class="mb-3">
+                    <label for="viewingTimeMin" class="form-label">Tiempo de Visualización Mínimo (segundos)</label>
+                    <input type="number" class="form-control" id="viewingTimeMin" name="viewingTimeMin"
+                      value="<%= settings.deviceSettings.viewingTimes.min %>">
+                  </div>
+                  <div class="mb-3">
+                    <label for="viewingTimeMax" class="form-label">Tiempo de Visualización Máximo (segundos)</label>
+                    <input type="number" class="form-control" id="viewingTimeMax" name="viewingTimeMax"
+                      value="<%= settings.deviceSettings.viewingTimes.max %>">
+                  </div>
+                  <div class="mb-3">
+                    <label for="interactionProbability" class="form-label">Probabilidad de Interacción (0-1)</label>
+                    <input type="number" class="form-control" id="interactionProbability" name="interactionProbability"
+                      min="0" max="1" step="0.1" value="<%= settings.deviceSettings.interactionProbability %>">
+                  </div>
+                  <div class="mb-3">
+                    <label for="rotationInterval" class="form-label">Intervalo de Rotación (minutos)</label>
+                    <input type="number" class="form-control" id="rotationInterval" name="rotationInterval"
+                      value="<%= settings.deviceSettings.rotationInterval %>">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logs -->
+          <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Logs del Sistema</h5>
+                <button type="button" class="btn btn-primary btn-sm" id="refreshLogs">
+                  <i class="fas fa-sync"></i> Refrescar
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="logFile" class="form-label">Archivo de Log</label>
+                  <select class="form-select" id="logFile">
+                    <option value="combined">combined.log</option>
+                    <option value="error">error.log</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="logLevel" class="form-label">Nivel</label>
+                  <select class="form-select" id="logLevel">
+                    <option value="all">Todos</option>
+                    <option value="info">Info</option>
+                    <option value="warn">Warn</option>
+                    <option value="error">Error</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="logLines" class="form-label">Líneas</label>
+                  <select class="form-select" id="logLines">
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                  </select>
+                </div>
+
+                <div class="log-container mt-3">
+                  <pre id="logContent" class="bg-dark text-light p-3"
+                    style="max-height: 400px; overflow-y: auto;"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para añadir aplicación -->
+  <div class="modal fade" id="addAppModal" tabindex="-1" aria-labelledby="addAppModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addAppModalLabel">Nueva Aplicación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addAppForm" action="/apps" method="POST">
+            <div class="mb-3">
+              <label for="appName" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="appName" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="appPackage" class="form-label">Nombre del Paquete</label>
+              <input type="text" class="form-control" id="appPackage" name="packageName" required>
+            </div>
+            <div class="mb-3">
+              <label for="appVersion" class="form-label">Versión</label>
+              <input type="text" class="form-control" id="appVersion" name="version" placeholder="latest">
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="appActive" name="isActive" checked>
+              <label class="form-check-label" for="appActive">Activa</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" form="addAppForm" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Cargar logs iniciales
+      loadLogs();
+
+      // Event listeners
+      document.getElementById('refreshLogs').addEventListener('click', loadLogs);
+      document.getElementById('logFile').addEventListener('change', loadLogs);
+      document.getElementById('logLevel').addEventListener('change', loadLogs);
+      document.getElementById('logLines').addEventListener('change', loadLogs);
+
+      // Event listener para formulario de perfil
+      document.getElementById('profileForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        updatePassword();
+      });
+
+      // Event listener para formulario de configuración del sistema
+      document.getElementById('systemSettingsForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        updateSystemSettings();
+      });
+    });
+  </script>

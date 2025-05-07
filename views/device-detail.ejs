@@ -1,0 +1,290 @@
+<%- contentFor('body') %>
+
+  <div class="content-section active">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Detalles del Dispositivo</h2>
+      <div>
+        <a href="/devices" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <a href="/devices/<%= device.id %>/edit" class="btn btn-warning">
+          <i class="fas fa-edit"></i> Editar
+        </a>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5>Información Básica</h5>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <tr>
+                <th>Nombre</th>
+                <td>
+                  <%= device.name %>
+                </td>
+              </tr>
+              <tr>
+                <th>Serial</th>
+                <td>
+                  <%= device.serial %>
+                </td>
+              </tr>
+              <tr>
+                <th>Estado</th>
+                <td>
+                  <% if (device.status==='online' ) { %>
+                    <span class="badge bg-success">Online</span>
+                    <% } else if (device.status==='offline' ) { %>
+                      <span class="badge bg-secondary">Offline</span>
+                      <% } else if (device.status==='working' ) { %>
+                        <span class="badge bg-primary">Trabajando</span>
+                        <% } else { %>
+                          <span class="badge bg-danger">Error</span>
+                          <% } %>
+                </td>
+              </tr>
+              <tr>
+                <th>Última Conexión</th>
+                <td>
+                  <%= formatDate(device.lastConnection) %>
+                </td>
+              </tr>
+            </table>
+
+            <div class="mt-3">
+              <% if (device.status==='offline' ) { %>
+                <button class="btn btn-success w-100 connect-device" data-id="<%= device.id %>">
+                  <i class="fas fa-plug"></i> Conectar
+                </button>
+                <% } else if (device.status==='online' ) { %>
+                  <button class="btn btn-primary w-100 capture-screen" data-id="<%= device.id %>">
+                    <i class="fas fa-camera"></i> Capturar Pantalla
+                  </button>
+                  <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5>Aplicaciones Instaladas</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group">
+              <% if (device.installedApps && device.installedApps.length> 0) { %>
+                <% device.installedApps.forEach(function(app) { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <%= app.name %>
+                      <span class="badge bg-primary rounded-pill">
+                        <%= app.packageName %>
+                      </span>
+                  </li>
+                  <% }); %>
+                    <% } else { %>
+                      <li class="list-group-item">No hay aplicaciones instaladas</li>
+                      <% } %>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5>Tareas</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Aplicación</th>
+                    <th>Estado</th>
+                    <th>Prioridad</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (tasks && tasks.length> 0) { %>
+                    <% tasks.forEach(function(task) { %>
+                      <tr>
+                        <td>
+                          <%= task.app ? task.app.name : 'Desconocida' %>
+                        </td>
+                        <td>
+                          <% if (task.status==='pending' ) { %>
+                            <span class="badge bg-warning">Pendiente</span>
+                            <% } else if (task.status==='running' ) { %>
+                              <span class="badge bg-primary">En ejecución</span>
+                              <% } else if (task.status==='completed' ) { %>
+                                <span class="badge bg-success">Completada</span>
+                                <% } else { %>
+                                  <span class="badge bg-danger">Error</span>
+                                  <% } %>
+                        </td>
+                        <td>
+                          <%= task.priority %>
+                        </td>
+                        <td>
+                          <%= task.startTime ? formatDate(task.startTime) : '-' %>
+                        </td>
+                        <td>
+                          <%= task.endTime ? formatDate(task.endTime) : '-' %>
+                        </td>
+                        <td>
+                          <div class="btn-group" role="group">
+                            <a href="/tasks/<%= task.id %>" class="btn btn-info btn-sm">
+                              <i class="fas fa-eye"></i>
+                            </a>
+                            <% if (task.status==='pending' ) { %>
+                              <button type="button" class="btn btn-success btn-sm start-task" data-id="<%= task.id %>">
+                                <i class="fas fa-play"></i>
+                              </button>
+                              <% } else if (task.status==='running' ) { %>
+                                <button type="button" class="btn btn-warning btn-sm stop-task" data-id="<%= task.id %>">
+                                  <i class="fas fa-stop"></i>
+                                </button>
+                                <% } %>
+                          </div>
+                        </td>
+                      </tr>
+                      <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="6" class="text-center">No hay tareas para este dispositivo</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-3">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                <i class="fas fa-plus"></i> Nueva Tarea
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5>Estadísticas</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="stat-card mb-3">
+                  <h6>Tiempo Total</h6>
+                  <p class="h3">
+                    <%= formatTime(deviceStats.totalViewTime || 0) %>
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="stat-card mb-3">
+                  <h6>Interacciones</h6>
+                  <p class="h3">
+                    <%= deviceStats.totalInteractions || 0 %>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <h6>Distribución por Aplicación</h6>
+              <canvas id="deviceStatsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para añadir tarea -->
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addTaskModalLabel">Nueva Tarea</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addTaskForm" action="/tasks" method="POST">
+            <input type="hidden" name="deviceId" value="<%= device.id %>">
+            <div class="mb-3">
+              <label for="taskApp" class="form-label">Aplicación</label>
+              <select class="form-select" id="taskApp" name="appId" required>
+                <option value="">Seleccione una aplicación</option>
+                <% if (device.installedApps && device.installedApps.length> 0) { %>
+                  <% device.installedApps.forEach(function(app) { %>
+                    <option value="<%= app.id %>">
+                      <%= app.name %>
+                    </option>
+                    <% }); %>
+                      <% } %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="taskPriority" class="form-label">Prioridad</label>
+              <select class="form-select" id="taskPriority" name="priority">
+                <option value="1">Baja</option>
+                <option value="5" selected>Normal</option>
+                <option value="10">Alta</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="taskSettings" class="form-label">Configuración (JSON)</label>
+              <textarea class="form-control" id="taskSettings" name="settings"
+                rows="4">{"viewTime": 60, "interactions": 10}</textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" form="addTaskForm" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para mostrar captura de pantalla -->
+  <div class="modal fade" id="screenshotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Captura de Pantalla</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="screenshotImage" src="" alt="Captura de Pantalla" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Inicializar gráfico de estadísticas
+      initializeDeviceStatsChart(<% - JSON.stringify(deviceStats.statsByApp || []) %>);
+
+      // Event listener para conectar dispositivo
+      document.querySelectorAll('.connect-device').forEach(function (button) {
+        button.addEventListener('click', function () {
+          connectDevice(this.getAttribute('data-id'));
+        });
+      });
+
+      // Event listener para capturar pantalla
+      document.querySelectorAll('.capture-screen').forEach(function (button) {
+        button.addEventListener('click', function () {
+          captureScreen(this.getAttribute('data-id'));
+        });
+      });
+    });
+  </script>

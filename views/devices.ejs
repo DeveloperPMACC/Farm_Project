@@ -1,0 +1,137 @@
+<%- contentFor('body') %>
+
+  <div id="devices-section" class="content-section active">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Dispositivos</h2>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
+        <i class="fas fa-plus"></i> Nuevo Dispositivo
+      </button>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Serial</th>
+                <th>Estado</th>
+                <th>Última Conexión</th>
+                <th>Apps Instaladas</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (devices && devices.length> 0) { %>
+                <% devices.forEach(function(device) { %>
+                  <tr>
+                    <td>
+                      <%= device.name %>
+                    </td>
+                    <td>
+                      <%= device.serial %>
+                    </td>
+                    <td>
+                      <% if (device.status==='online' ) { %>
+                        <span class="badge bg-success">Online</span>
+                        <% } else if (device.status==='offline' ) { %>
+                          <span class="badge bg-secondary">Offline</span>
+                          <% } else if (device.status==='working' ) { %>
+                            <span class="badge bg-primary">Trabajando</span>
+                            <% } else { %>
+                              <span class="badge bg-danger">Error</span>
+                              <% } %>
+                    </td>
+                    <td>
+                      <%= formatDate(device.lastConnection) %>
+                    </td>
+                    <td>
+                      <% if (device.installedApps && device.installedApps.length> 0) { %>
+                        <% device.installedApps.forEach(function(app, index) { %>
+                          <%= app.name %>
+                            <%= index < device.installedApps.length - 1 ? ', ' : '' %>
+                              <% }); %>
+                                <% } else { %>
+                                  No hay apps instaladas
+                                  <% } %>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <a href="/devices/<%= device.id %>" class="btn btn-info btn-sm">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="/devices/<%= device.id %>/edit" class="btn btn-warning btn-sm">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm delete-device" data-id="<%= device.id %>">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }); %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="6" class="text-center">No hay dispositivos registrados</td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para añadir dispositivo -->
+  <div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addDeviceModalLabel">Nuevo Dispositivo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addDeviceForm" action="/devices" method="POST">
+            <div class="mb-3">
+              <label for="deviceName" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="deviceName" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="deviceSerial" class="form-label">Serial</label>
+              <input type="text" class="form-control" id="deviceSerial" name="serial" required>
+            </div>
+            <div class="mb-3">
+              <label for="deviceStatus" class="form-label">Estado</label>
+              <select class="form-select" id="deviceStatus" name="status">
+                <option value="offline">Offline</option>
+                <option value="online">Online</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Aplicaciones</label>
+              <div class="form-check">
+                <% if (apps && apps.length> 0) { %>
+                  <% apps.forEach(function(app) { %>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="apps[]" value="<%= app.id %>"
+                        id="app<%= app.id %>">
+                      <label class="form-check-label" for="app<%= app.id %>">
+                        <%= app.name %> (<%= app.packageName %>)
+                      </label>
+                    </div>
+                    <% }); %>
+                      <% } else { %>
+                        <p>No hay aplicaciones disponibles</p>
+                        <% } %>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" form="addDeviceForm" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>

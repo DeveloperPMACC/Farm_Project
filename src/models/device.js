@@ -1,51 +1,55 @@
-// src/models/device.js (Sequelize)
-const { DataTypes } = require('sequelize');
+'use strict';
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Device = sequelize.define('Device', {
-    deviceId: {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    serial: {
       type: DataTypes.STRING,
-      primaryKey: true,
+      allowNull: false,
+      unique: true
+    },
+    name: {
+      type: DataTypes.STRING,
       allowNull: false
     },
-    model: {
-      type: DataTypes.STRING,
-      defaultValue: 'Unknown'
-    },
-    androidVersion: {
-      type: DataTypes.STRING,
-      defaultValue: 'Unknown'
-    },
-    batteryLevel: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
     status: {
-      type: DataTypes.ENUM('idle', 'busy', 'disconnected', 'error', 'battery_critical'),
-      defaultValue: 'idle'
+      type: DataTypes.ENUM('online', 'offline', 'working', 'error'),
+      defaultValue: 'offline'
     },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
-    lastSeen: {
+    lastConnection: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
     },
-    errorMessage: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    lastTaskTime: {
-      type: DataTypes.DATE,
-      allowNull: true
+    settings: {
+      type: DataTypes.JSONB,
+      defaultValue: {
+        viewingTime: 60,
+        interactionProbability: 0.3,
+        account: ''
+      }
     }
   }, {
-    indexes: [
-      { fields: ['status', 'isActive'] },
-      { fields: ['lastSeen'] }
-    ]
+    timestamps: true,
+    tableName: 'devices'
   });
+
+  Device.associate = function (models) {
+    // Relaciones con otros modelos
+    Device.belongsToMany(models.App, {
+      through: 'DeviceApps',
+      foreignKey: 'deviceId',
+      as: 'installedApps'
+    });
+
+    Device.hasMany(models.Task, {
+      foreignKey: 'deviceId',
+      as: 'tasks'
+    });
+  };
 
   return Device;
 };

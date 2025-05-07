@@ -1,0 +1,2 @@
+# Este archivo existe para asegurar que la carpeta logs se incluya en el repositorio de Git
+# Los archivos de log serán generados por la aplicación y no deben ser versionados

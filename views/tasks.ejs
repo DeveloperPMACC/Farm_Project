@@ -1,0 +1,146 @@
+<%- contentFor('body') %>
+
+  <div id="tasks-section" class="content-section active">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Tareas</h2>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        <i class="fas fa-plus"></i> Nueva Tarea
+      </button>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Aplicación</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (tasks && tasks.length> 0) { %>
+                <% tasks.forEach(function(task) { %>
+                  <tr>
+                    <td>
+                      <%= task.device ? task.device.name : 'Desconocido' %>
+                    </td>
+                    <td>
+                      <%= task.app ? task.app.name : 'Desconocida' %>
+                    </td>
+                    <td>
+                      <% if (task.status==='pending' ) { %>
+                        <span class="badge bg-warning">Pendiente</span>
+                        <% } else if (task.status==='running' ) { %>
+                          <span class="badge bg-primary">En ejecución</span>
+                          <% } else if (task.status==='completed' ) { %>
+                            <span class="badge bg-success">Completada</span>
+                            <% } else { %>
+                              <span class="badge bg-danger">Error</span>
+                              <% } %>
+                    </td>
+                    <td>
+                      <%= task.priority %>
+                    </td>
+                    <td>
+                      <%= task.startTime ? formatDate(task.startTime) : '-' %>
+                    </td>
+                    <td>
+                      <%= task.endTime ? formatDate(task.endTime) : '-' %>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <a href="/tasks/<%= task.id %>" class="btn btn-info btn-sm">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <% if (task.status==='pending' ) { %>
+                          <button type="button" class="btn btn-success btn-sm start-task" data-id="<%= task.id %>">
+                            <i class="fas fa-play"></i>
+                          </button>
+                          <% } else if (task.status==='running' ) { %>
+                            <button type="button" class="btn btn-warning btn-sm stop-task" data-id="<%= task.id %>">
+                              <i class="fas fa-stop"></i>
+                            </button>
+                            <% } %>
+                              <button type="button" class="btn btn-danger btn-sm delete-task" data-id="<%= task.id %>">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }); %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="7" class="text-center">No hay tareas registradas</td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para añadir tarea -->
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addTaskModalLabel">Nueva Tarea</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addTaskForm" action="/tasks" method="POST">
+            <div class="mb-3">
+              <label for="taskDevice" class="form-label">Dispositivo</label>
+              <select class="form-select" id="taskDevice" name="deviceId" required>
+                <option value="">Seleccione un dispositivo</option>
+                <% if (devices && devices.length> 0) { %>
+                  <% devices.forEach(function(device) { %>
+                    <option value="<%= device.id %>">
+                      <%= device.name %> (<%= device.serial %>)
+                    </option>
+                    <% }); %>
+                      <% } %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="taskApp" class="form-label">Aplicación</label>
+              <select class="form-select" id="taskApp" name="appId" required>
+                <option value="">Seleccione una aplicación</option>
+                <% if (apps && apps.length> 0) { %>
+                  <% apps.forEach(function(app) { %>
+                    <option value="<%= app.id %>">
+                      <%= app.name %>
+                    </option>
+                    <% }); %>
+                      <% } %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="taskPriority" class="form-label">Prioridad</label>
+              <select class="form-select" id="taskPriority" name="priority">
+                <option value="1">Baja</option>
+                <option value="5" selected>Normal</option>
+                <option value="10">Alta</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="taskSettings" class="form-label">Configuración (JSON)</label>
+              <textarea class="form-control" id="taskSettings" name="settings"
+                rows="4">{"viewTime": 60, "interactions": 10}</textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" form="addTaskForm" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>

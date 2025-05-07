@@ -1,0 +1,42 @@
+<nav id="sidebar" class="<%= locals.sidebarCollapsed ? 'active' : '' %>">
+  <div class="sidebar-header">
+    <h3>Farm Project</h3>
+  </div>
+
+  <ul class="list-unstyled components">
+    <li class="<%= activePage === 'dashboard' ? 'active' : '' %>">
+      <a href="/" data-section="dashboard">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </a>
+    </li>
+    <li class="<%= activePage === 'devices' ? 'active' : '' %>">
+      <a href="/devices" data-section="devices">
+        <i class="fas fa-mobile-alt"></i> Dispositivos
+      </a>
+    </li>
+    <li class="<%= activePage === 'tasks' ? 'active' : '' %>">
+      <a href="/tasks" data-section="tasks">
+        <i class="fas fa-tasks"></i> Tareas
+      </a>
+    </li>
+    <li class="<%= activePage === 'statistics' ? 'active' : '' %>">
+      <a href="/statistics" data-section="statistics">
+        <i class="fas fa-chart-bar"></i> Estadísticas
+      </a>
+    </li>
+    <li class="<%= activePage === 'settings' ? 'active' : '' %>">
+      <a href="/settings" data-section="settings">
+        <i class="fas fa-cog"></i> Configuración
+      </a>
+    </li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <p>Usuario: <span id="username">
+        <%= user.username %>
+      </span></p>
+    <button id="logout-btn" class="btn btn-danger btn-sm">
+      <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+    </button>
+  </div>
+</nav>

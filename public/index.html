@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm Project - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <h3>Farm Project</h3>
+      </div>
+
+      <ul class="list-unstyled components">
+        <li class="active">
+          <a href="#" data-section="dashboard">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#" data-section="devices">
+            <i class="fas fa-mobile-alt"></i> Dispositivos
+          </a>
+        </li>
+        <li>
+          <a href="#" data-section="tasks">
+            <i class="fas fa-tasks"></i> Tareas
+          </a>
+        </li>
+        <li>
+          <a href="#" data-section="statistics">
+            <i class="fas fa-chart-bar"></i> Estadísticas
+          </a>
+        </li>
+        <li>
+          <a href="#" data-section="settings">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <p>Usuario: <span id="username">Admin</span></p>
+        <button id="logout-btn" class="btn btn-danger btn-sm">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="ms-auto">
+            <span id="current-time"></span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sección del Dashboard -->
+      <div id="dashboard-section" class="content-section active">
+        <h2>Dashboard</h2>
+
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <div class="card text-white bg-primary">
+              <div class="card-body">
+                <h5 class="card-title">Dispositivos</h5>
+                <p class="card-text display-4" id="devices-count">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card text-white bg-success">
+              <div class="card-body">
+                <h5 class="card-title">Tareas</h5>
+                <p class="card-text display-4" id="tasks-count">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card text-white bg-warning">
+              <div class="card-body">
+                <h5 class="card-title">Tiempo Total</h5>
+                <p class="card-text display-4" id="total-time">0h</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card text-white bg-danger">
+              <div class="card-body">
+                <h5 class="card-title">Interacciones</h5>
+                <p class="card-text display-4" id="interactions-count">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Actividad Reciente</h5>
+              </div>
+              <div class="card-body">
+                <div id="activity-table">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Dispositivo</th>
+                        <th>App</th>
+                        <th>Tiempo</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="activity-table-body">
+                      <!-- Se llenará dinámicamente -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Estadísticas por App</h5>
+              </div>
+              <div class="card-body">
+                <canvas id="apps-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secciones adicionales (se mostrarán/ocultarán dinámicamente) -->
+      <div id="devices-section" class="content-section">
+        <h2>Dispositivos</h2>
+        <!-- Contenido de Dispositivos -->
+      </div>
+
+      <div id="tasks-section" class="content-section">
+        <h2>Tareas</h2>
+        <!-- Contenido de Tareas -->
+      </div>
+
+      <div id="statistics-section" class="content-section">
+        <h2>Estadísticas</h2>
+        <!-- Contenido de Estadísticas -->
+      </div>
+
+      <div id="settings-section" class="content-section">
+        <h2>Configuración</h2>
+        <!-- Contenido de Configuración -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+        </div>
+        <div class="modal-body">
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="username" class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="username-input" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="password-input" required>
+            </div>
+            <div class="alert alert-danger d-none" id="login-error"></div>
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

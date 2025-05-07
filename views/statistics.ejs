@@ -1,0 +1,276 @@
+<%- contentFor('body') %>
+
+  <div id="statistics-section" class="content-section active">
+    <h2>Estadísticas</h2>
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" id="statsTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary"
+              type="button" role="tab" aria-controls="summary" aria-selected="true">Resumen</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="apps-tab" data-bs-toggle="tab" data-bs-target="#apps" type="button" role="tab"
+              aria-controls="apps" aria-selected="false">Aplicaciones</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="devices-tab" data-bs-toggle="tab" data-bs-target="#device-stats" type="button"
+              role="tab" aria-controls="device-stats" aria-selected="false">Dispositivos</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="period-tab" data-bs-toggle="tab" data-bs-target="#period" type="button"
+              role="tab" aria-controls="period" aria-selected="false">Por Período</button>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body">
+        <div class="tab-content" id="statsTabContent">
+          <!-- Resumen -->
+          <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+            <div class="row">
+              <div class="col-md-6">
+                <h4>Resumen General</h4>
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="stat-item">
+                          <h5>Tiempo Total</h5>
+                          <p class="h3">
+                            <%= formatTime(stats.totalViewTime) %>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="stat-item">
+                          <h5>Interacciones</h5>
+                          <p class="h3">
+                            <%= stats.totalInteractions %>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 class="mt-4">Actividad Reciente</h4>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Dispositivo</th>
+                        <th>App</th>
+                        <th>Tiempo</th>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (stats.recentActivity && stats.recentActivity.length> 0) { %>
+                        <% stats.recentActivity.forEach(function(activity) { %>
+                          <tr>
+                            <td>
+                              <%= activity.device ? activity.device.name : 'Desconocido' %>
+                            </td>
+                            <td>
+                              <%= activity.app ? activity.app.name : 'Desconocida' %>
+                            </td>
+                            <td>
+                              <%= formatTime(activity.viewTime) %>
+                            </td>
+                            <td>
+                              <%= formatDate(activity.timestamp) %>
+                            </td>
+                          </tr>
+                          <% }); %>
+                            <% } else { %>
+                              <tr>
+                                <td colspan="4" class="text-center">No hay actividad reciente</td>
+                              </tr>
+                              <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h4>Distribución por App</h4>
+                <div class="card">
+                  <div class="card-body">
+                    <canvas id="statsAppsChart"></canvas>
+                  </div>
+                </div>
+
+                <h4 class="mt-4">Distribución por Dispositivo</h4>
+                <div class="card">
+                  <div class="card-body">
+                    <canvas id="statsDevicesChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aplicaciones -->
+          <div class="tab-pane fade" id="apps" role="tabpanel" aria-labelledby="apps-tab">
+            <h4>Estadísticas por Aplicación</h4>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Aplicación</th>
+                    <th>Tiempo Total</th>
+                    <th>Interacciones</th>
+                    <th>Sesiones</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (stats.statsByApp && stats.statsByApp.length> 0) { %>
+                    <% stats.statsByApp.forEach(function(stat) { %>
+                      <tr>
+                        <td>
+                          <%= stat.app ? stat.app.name : 'Desconocida' %>
+                        </td>
+                        <td>
+                          <%= formatTime(stat.totalViewTime) %>
+                        </td>
+                        <td>
+                          <%= stat.totalInteractions %>
+                        </td>
+                        <td>
+                          <%= stat.count %>
+                        </td>
+                        <td>
+                          <a href="/statistics/app/<%= stat.appId %>" class="btn btn-info btn-sm">
+                            <i class="fas fa-chart-bar"></i> Detalles
+                          </a>
+                        </td>
+                      </tr>
+                      <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="5" class="text-center">No hay estadísticas de aplicaciones</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Dispositivos -->
+          <div class="tab-pane fade" id="device-stats" role="tabpanel" aria-labelledby="devices-tab">
+            <h4>Estadísticas por Dispositivo</h4>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Dispositivo</th>
+                    <th>Tiempo Total</th>
+                    <th>Interacciones</th>
+                    <th>Sesiones</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (stats.statsByDevice && stats.statsByDevice.length> 0) { %>
+                    <% stats.statsByDevice.forEach(function(stat) { %>
+                      <tr>
+                        <td>
+                          <%= stat.device ? stat.device.name : 'Desconocido' %>
+                        </td>
+                        <td>
+                          <%= formatTime(stat.totalViewTime) %>
+                        </td>
+                        <td>
+                          <%= stat.totalInteractions %>
+                        </td>
+                        <td>
+                          <%= stat.count %>
+                        </td>
+                        <td>
+                          <a href="/statistics/device/<%= stat.deviceId %>" class="btn btn-info btn-sm">
+                            <i class="fas fa-chart-bar"></i> Detalles
+                          </a>
+                        </td>
+                      </tr>
+                      <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="5" class="text-center">No hay estadísticas de dispositivos</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Por Período -->
+          <div class="tab-pane fade" id="period" role="tabpanel" aria-labelledby="period-tab">
+            <h4>Estadísticas por Período</h4>
+
+            <div class="card mb-4">
+              <div class="card-body">
+                <form id="periodStatsForm" class="row g-3">
+                  <div class="col-md-4">
+                    <label for="startDate" class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="endDate" class="form-label">Fecha Fin</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" required>
+                  </div>
+                  <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div id="periodStatsResults" class="d-none">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5>Resumen del Período</h5>
+                    </div>
+                    <div class="card-body">
+                      <p><strong>Período:</strong> <span id="periodDates"></span></p>
+                      <p><strong>Tiempo Total:</strong> <span id="periodTotalTime"></span></p>
+                      <p><strong>Interacciones:</strong> <span id="periodTotalInteractions"></span></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5>Actividad por Día</h5>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="periodChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Configuración de gráficos estadísticos
+      const statsByApp = <% - JSON.stringify(stats.statsByApp || []) %>;
+      const statsByDevice = <% - JSON.stringify(stats.statsByDevice || []) %>;
+
+      // Inicializar gráficos
+      initializeStatsCharts(statsByApp, statsByDevice);
+
+      // Event listener para formulario de período
+      document.getElementById('periodStatsForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        loadPeriodStats();
+      });
+    });
+  </script>
