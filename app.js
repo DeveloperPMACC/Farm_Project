@@ -10,7 +10,7 @@ const config = require('./src/config');
 
 // Importar utilidades
 const logger = require('./src/utils/logger');
-const { testConnection } = require('./src/utils/database');
+const { testConnection } = require('./src/utils/database.js');
 
 // Importar rutas
 const deviceRoutes = require('./src/routes/device.routes');

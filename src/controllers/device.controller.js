@@ -35,9 +35,9 @@ class DeviceController {
       const device = await DeviceService.getById(id);
 
       if (!device) {
-        return res.status(404).json({
-          success: false,
-          message: 'Dispositivo no encontrado'
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Dispositivo no encontrado' 
         });
       }
 

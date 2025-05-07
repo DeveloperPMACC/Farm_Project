@@ -5,6 +5,8 @@ const AdbService = require('../../../src/services/adb.service');
 const adb = require('adbkit');
 const { spawn } = require('child_process');
 
+process.env.ADB_PATH = 'adb';
+
 describe('AdbService', () => {
     // Restaurar los stubs después de cada prueba
     afterEach(() => {
